@@ -27,6 +27,10 @@ public class LoginServlet extends HttpServlet {
             String cookie = "JSESSIONID=" + newSession.getId() + "; HttpOnly; Secure; SameSite=Strict";
             response.setHeader("Set-Cookie", cookie);
 
+            // 存储客户端IP地址和用户代理字符串
+            newSession.setAttribute("clientIP", request.getRemoteAddr());
+            newSession.setAttribute("userAgent", request.getHeader("User-Agent"));
+
             response.sendRedirect("welcome");
         } else {
             response.sendRedirect("login.html");
@@ -42,7 +46,15 @@ public class WelcomeServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         if (session != null && session.getAttribute("user") != null) {
-            out.println("Welcome, " + session.getAttribute("user"));
+            // 检查客户端IP地址和用户代理字符串
+            String clientIP = (String) session.getAttribute("clientIP");
+            String userAgent = (String) session.getAttribute("userAgent");
+            if (clientIP.equals(request.getRemoteAddr()) && userAgent.equals(request.getHeader("User-Agent"))) {
+                out.println("Welcome, " + session.getAttribute("user"));
+            } else {
+                session.invalidate(); // 使会话失效
+                response.sendRedirect("login.html");
+            }
         } else {
             response.sendRedirect("login.html");
         }
