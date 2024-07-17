@@ -21,6 +21,11 @@ public class LoginServlet extends HttpServlet {
             }
             HttpSession newSession = request.getSession(true); // 创建新会话
             newSession.setAttribute("user", username);
+            newSession.setMaxInactiveInterval(15 * 60); // 设置会话超时时间为15分钟
+
+            // 设置HttpOnly和Secure标志
+            response.setHeader("Set-Cookie", "JSESSIONID=" + newSession.getId() + "; HttpOnly; Secure");
+
             response.sendRedirect("welcome");
         } else {
             response.sendRedirect("login.html");
