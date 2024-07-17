@@ -16,31 +16,20 @@ class User implements Serializable {
     }
 }
 
-public class SecureDeserializationExample {
+public class InsecureDeserializationExample {
     public static void main(String[] args) {
         if (args.length < 1) {
-            System.out.println("Usage: java SecureDeserializationExample <serialized object file>");
+            System.out.println("Usage: java InsecureDeserializationExample <serialized object file>");
             return;
         }
 
         String filename = args[0];
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
-            Object obj = readObjectSafely(ois);
+            Object obj = ois.readObject();
             System.out.println("Deserialized object: " + obj);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        }
-    }
-
-    private static Object readObjectSafely(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        Object obj = ois.readObject();
-
-        // 检查反序列化的对象是否是允许的类型
-        if (obj instanceof User) {
-            return obj;
-        } else {
-            throw new InvalidClassException("Unauthorized deserialization attempt", obj.getClass().getName());
         }
     }
 }
