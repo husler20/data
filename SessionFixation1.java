@@ -15,7 +15,7 @@ public class LoginServlet extends HttpServlet {
 
         // 简单的用户名和密码检查
         if ("admin".equals(username) && "admin123".equals(password)) {
-            HttpSession session = request.getSession(true); // 不安全的会话处理
+            HttpSession session = request.getSession(true);
             session.setAttribute("user", username);
             response.sendRedirect("welcome");
         } else {
@@ -38,3 +38,4 @@ public class WelcomeServlet extends HttpServlet {
         }
     }
 }
+
