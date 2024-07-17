@@ -24,7 +24,8 @@ public class LoginServlet extends HttpServlet {
             newSession.setMaxInactiveInterval(15 * 60); // 设置会话超时时间为15分钟
 
             // 设置HttpOnly和Secure标志
-            response.setHeader("Set-Cookie", "JSESSIONID=" + newSession.getId() + "; HttpOnly; Secure");
+            String cookie = "JSESSIONID=" + newSession.getId() + "; HttpOnly; Secure; SameSite=Strict";
+            response.setHeader("Set-Cookie", cookie);
 
             response.sendRedirect("welcome");
         } else {
@@ -47,3 +48,15 @@ public class WelcomeServlet extends HttpServlet {
         }
     }
 }
+
+@WebServlet("/logout")
+public class LogoutServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate(); // 使会话失效
+        }
+        response.sendRedirect("login.html");
+    }
+}
+
