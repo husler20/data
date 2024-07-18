@@ -1,15 +1,18 @@
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
-@WebServlet("/vulnerable")
-public class VulnerableServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userInput = request.getParameter("input");
-        response.setHeader("Custom-Header", userInput);
-        response.getWriter().println("Response with custom header.");
+public class Logger {
+    public void log(String message) throws IOException {
+        try (FileWriter fw = new FileWriter("application.log", true);
+             PrintWriter pw = new PrintWriter(fw)) {
+            pw.println(message);
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        Logger logger = new Logger();
+        String userInput = "User input message"; // 这里模拟用户输入
+        logger.log(userInput);
     }
 }
