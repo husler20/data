@@ -1,23 +1,23 @@
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
-@WebServlet("/secure")
-public class SecureServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userInput = request.getParameter("input");
-        if (userInput != null) {
-            userInput = sanitizeInput(userInput);
+public class SecureLogger {
+    public void log(String message) throws IOException {
+        try (FileWriter fw = new FileWriter("application.log", true);
+             PrintWriter pw = new PrintWriter(fw)) {
+            pw.println(sanitizeInput(message));
         }
-        response.setHeader("Custom-Header", userInput);
-        response.getWriter().println("Response with custom header.");
     }
 
     private String sanitizeInput(String input) {
         // 移除 CRLF 字符
         return input.replaceAll("[\\r\\n]", "");
+    }
+
+    public static void main(String[] args) throws IOException {
+        SecureLogger logger = new SecureLogger();
+        String userInput = "User input message"; // 这里模拟用户输入
+        logger.log(userInput);
     }
 }
